@@ -1,8 +1,18 @@
-const knex = require("knex");
+const dbconfig = require("./db/config")
+const knex = require("knex")(dbconfig.sqlite);
 
-    const dropTable = async (tableName) => {
-        const exist = await knex.schema.hasTable(tableName);
+(async () => {
+    try {
+        const exist = await knex.schema.hasTable("mensajes");
         if (exist) {
-            return knex.schema.dropTable(tableName);
+            await knex.schema.dropTable("mensajes");
+            console.log("Listo");
         }
     }
+    catch(error) {
+        console.log(error)
+    }
+    finally {
+        knex.destroy();
+    }   
+    })();

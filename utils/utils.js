@@ -5,7 +5,7 @@ const formatMessage = (id, username, text) => {
         id,
         username,
         text,
-        time: moment().format("h:mm a")
+        created_at: moment().format("h:mm a")
     }
 }
 

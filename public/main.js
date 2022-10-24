@@ -20,13 +20,13 @@ const renderMessage = (socketId, data) => {
             : 'other-messages-container';
         if (className === 'my-messages-container') {
             html = `<div class="my-messages">
-            <span><b>Yo</b> ${data.time}</span><br />
+            <span><b>Yo</b> ${data.created_at}</span><br />
             <span>${data.text}</span>
         </div>`;
         }
         else {
             html = `<div class="other-messages">
-            <span><b>${data.username}</b> ${data.time}</span><br />
+            <span><b>${data.username}</b> ${data.created_at}</span><br />
             <span>${data.text}</span>
         </div>`
         }
@@ -45,7 +45,7 @@ const renderMessages = (data) => {
         let fragment = `
         <div class="other-messages-container">
             <div class="other-messages">
-                <span><b>${elem.username}</b> ${elem.time}</span><br />
+                <span><b>${elem.username}</b> ${elem.created_at}</span><br />
                 <span>${elem.text}</span>
             </div>
         </div>`;
@@ -94,10 +94,10 @@ socket.on("products", (data) => {
 formProducts.addEventListener("submit", (event) => {
     event.preventDefault();
     const newProduct = {
-        nombre: inputTitle.value,
-        precio: +(inputPrice.value),
-        picture: inputThumbnail.value,
-        descr: inputDescripcion.value
+        name: inputTitle.value,
+        thumbnail: inputThumbnail.value,
+        description: inputDescripcion.value,
+        price: +(inputPrice.value),
     };
     socket.emit("new-product", newProduct);
 });

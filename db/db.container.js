@@ -10,7 +10,7 @@ class SQLClient {
     async save(data) {
         try {
             await this.knex(this.tabla).insert(data)
-            console.log("data cargada correctamente");
+            return "data cargada correctamente"
         }
         catch(error) {
             console.log(error);
@@ -43,7 +43,7 @@ class SQLClient {
             await this.knex.from(this.tabla)
                 .where("id", number)
                 .update(product)
-                console.log("data modificada correctamente")
+                return "data modificada correctamente"
         }
         catch (error) {
             console.log(error);
@@ -55,7 +55,7 @@ class SQLClient {
             await this.knex.from(this.tabla)
                 .where("id", number)
                 .del()
-                console.log("data eliminada correctamente")
+                return "data eliminada correctamente"
         }
         catch (error) {
             console.log(error);

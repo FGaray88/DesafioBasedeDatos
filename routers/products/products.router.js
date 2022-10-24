@@ -1,61 +1,63 @@
 
 const express = require("express")
-const Products = require("../../model/products");
-const products = new Products();
+const dbconfig = require("../../db/config")
+const SQLClient = require("../../db/db.container");
+const products = new SQLClient(dbconfig.mariaDB, "productos");
 
 
 const router = express.Router();
 
 
-router.get("/", (req, res) => {    
-  const data = products.getAll()
+router.get("/", async (req, res) => {    
+  const data = await products.getAll()
   res.json(data)
 })
 
-router.get("/:id",  (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const data =  products.getById(+(id))
+  const data =  await products.getById(+(id))
   if(data==undefined){
     res.status(404).json({ success: false, error: 'No se ha encontrado el producto' });
   }
   res.send(data)
 });
 
-router.post("/",  (req, res) => {
-  const { nombre, precio, picture, descr } = req.body;
-  if ( !nombre || !precio || !picture || !descr) {
+router.post("/", async (req, res) => {
+  const { name, price, thumbnail, description } = req.body;
+  if ( !name || !price || !thumbnail || !description) {
       return res.status(400).json({ success: false, error: 'Wrong body format' });
   }
   const newProduct = {
-    nombre,
-    precio: +(precio),
-    picture,
-    descr
+    name,
+    price: +(price),
+    thumbnail,
+    description
   };
-  const data =  products.save(newProduct)
+  const data =  await products.save(newProduct)
   return res.json({ success: true, result: data });
 });
 
 
 
-router.put("/:id",  (req, res) => {
+router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { nombre, precio, picture, descr } = req.body;
-  if ( !nombre || !precio || !picture || !descr) {
+  const { name, price, thumbnail, description } = req.body;
+  if ( !name || !price || !thumbnail || !description) {
     return res.status(400).json({ success: false, error: 'Wrong body format' });
   }
   const newProduct = {
-    nombre,
-    precio: +(precio),
-    picture,
+    name,
+    price: +(price),
+    thumbnail,
+    description
 };
-  const updatedID =  products.updateById(+(id), newProduct)
+  const updatedID = await products.updateById(+(id), newProduct)
   return res.json(updatedID);
 });
 
-router.delete("/:id",  (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
-  const data =  products.deleteById(+(id))
+  const data =  await products.deleteById(+(id))
   res.send("El producto se ha eliminado correctamente")
 });
 

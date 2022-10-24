@@ -7,12 +7,12 @@ const knex = require("knex")(dbconfig.sqlite);
         const exist = await knex.schema.hasTable("mensajes");
         console.log(exist)
         if (!exist) {
-            knex.schema.createTable("mensajes", table => {
+            await knex.schema.createTable("mensajes", (table) => {
                 table.increments("id")
                 table.string("username").notNullable().defaultTo("N/A")
                 table.string("text").notNullable()
                 table.timestamp("created_at").defaultTo(knex.fn.now())
-            })
+            });
         console.log("tabla creada con exito");
         }
     }
@@ -21,7 +21,8 @@ const knex = require("knex")(dbconfig.sqlite);
     }
     finally {
         knex.destroy();
-    }
+    }   
+    
 
     
     
