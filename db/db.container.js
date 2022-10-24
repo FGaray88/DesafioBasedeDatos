@@ -1,68 +1,69 @@
-const dbconfig = require("./config");
-const knex = require("knex")(dbconfig.mariaDB);
-// las lineas 1 y 2 deberian estar dentro del constructor? como hago eso?
+const knex = require("knex");
 
-class Productos {
+class SQLClient {
 
-    constructor(tabla) {
-        
+    constructor(config, tabla) {
+        this.knex = knex(config)
         this.tabla = tabla;
     }
 
-    async save(producto) {
+    async save(data) {
         try {
-            await knex(this.tabla).insert(producto)
-            console.log("productos agregados correctamente");
+            await this.knex(this.tabla).insert(data)
+            console.log("data cargada correctamente");
         }
         catch(error) {
             console.log(error);
         }
-        finally {
-            knex.destroy();
-        }
-            
     }
 
     async getAll() {
         try {
-            const dataProducts = await knex.from("productos").select("*");
-            return dataProducts;
+            const data = await this.knex.from(this.tabla).select("*");
+            return data;
         }
         catch(error) {
             console.log(error);
         }
-        finally {
-            knex.destroy();
+    }
+
+    async getById(number) {
+        try {
+            const data = await this.knex.from(this.tabla).select("*")
+            .where({ id: number });
+            return data;
+        }
+        catch(error) {
+            console.log(error);
         }
     }
 
-    async createTable() {
-        const exist = await knex.schema.hasTable(this.tabla);
-        if (!exist) {
-            knex.schema.createTable(this.tabla, table => {
-                table.increments("id");
-                table.string("name").notNullable().defaultTo("N/A")
-                table.string("thumbnail").notNullable()
-                table.string("description", 500)
-                table.integer("price")
-                table.integer("stock")
-                table.integer("code").unique()
-            })
+    async updateById(number, product) {
+        try {
+            await this.knex.from(this.tabla)
+                .where("id", number)
+                .update(product)
+                console.log("data modificada correctamente")
+        }
+        catch (error) {
+            console.log(error);
         }
     }
 
-    async dropTable() {
-        const exist = await knex.schema.hasTable(this.tabla);
-        if (exist) {
-            return knex.schema.dropTable(this.tabla);
+    async deleteById(number) {
+        try {
+            await this.knex.from(this.tabla)
+                .where("id", number)
+                .del()
+                console.log("data eliminada correctamente")
+        }
+        catch (error) {
+            console.log(error);
         }
     }
-
-
-
 }
 
 
 
 
-module.exports = Productos;
+module.exports = SQLClient;
